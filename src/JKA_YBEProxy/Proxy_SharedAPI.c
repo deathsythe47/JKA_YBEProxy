@@ -18,6 +18,12 @@ void Proxy_SharedAPI_GetUsercmd(int clientNum, usercmd_t* cmd)
 {
 	cmd->forcesel = 0xFFu;
 	cmd->angles[ROLL] = 0;
+	
+	/*
+	proxy.clientData[clientNum].pingIndex++;
+	proxy.clientData[clientNum].pingSample[proxy.clientData[clientNum].pingIndex & (PING_SAMPLE - 1)] = cmd->serverTime - proxy.clientData[clientNum].lastCmdServerTime;
+	proxy.clientData[clientNum].lastCmdServerTime = cmd->serverTime;
+	*/
 }
 
 // ==================================================
@@ -124,6 +130,35 @@ qboolean Proxy_SharedAPI_ClientCommand(int clientNum)
 	}
 
 	return qtrue;
+}
+
+void Proxy_SharedAPI_ClientThink(int clientNum)
+{
+	
+	if (clientNum < 0 || clientNum >= MAX_CLIENTS || !proxy.clientData->isConnected)
+	{
+		return;
+	}
+
+	usercmd_t userCmd;
+
+	proxy.trap->GetUsercmd(clientNum, &userCmd);
+
+	int i;
+	int	pingSum = 0;
+
+	//proxy.trap->Print("PING : %d\n", proxy.generalData.previousSvsTime - (proxy.trap->Milliseconds() - proxy.generalData.frameStartTimeMilliseconds) - userCmd.serverTime);
+
+	proxy.clientData->pingSample[proxy.clientData[clientNum].pingIndex & (PING_SAMPLE - 1)] = proxy.generalData.previousSvsTime - (proxy.trap->Milliseconds() - proxy.generalData.frameStartTimeMilliseconds) - userCmd.serverTime;
+	proxy.clientData[clientNum].pingIndex++;
+
+	for (i = 0; i < PING_SAMPLE; i++)
+	{
+		pingSum += proxy.clientData->pingSample[i];
+	}
+
+	playerState_t *ps = Proxy_GetPlayerStateByClientNum(clientNum);
+	ps->ping = (pingSum && ((pingSum + 50) / PING_SAMPLE) < 0) ? 0 : (pingSum / PING_SAMPLE);
 }
 
 void Proxy_SharedAPI_ClientUserinfoChanged(int clientNum)

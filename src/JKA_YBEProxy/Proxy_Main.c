@@ -80,6 +80,45 @@ Q_EXPORT intptr_t vmMain(intptr_t command, intptr_t arg0, intptr_t arg1, intptr_
 			break;
 		}
 		//==================================================
+		case GAME_RUN_FRAME: // (int clientNum)
+		//==================================================
+		{
+			proxy.generalData.previousSvsTime = proxy.generalData.svsTime;
+			proxy.generalData.svsTime = (int)arg0;
+			proxy.generalData.frameStartTimeMilliseconds = proxy.trap->Milliseconds();
+
+			//int sumPing = 0;
+
+			/*
+			for (int i = 0; i < PING_SAMPLE; ++i)
+			{
+				sumPing += proxy.clientData[0].pingSample[i];
+			}
+			*/
+
+			//proxy.clientData[0].truePing = sumPing / PING_SAMPLE;
+
+			//playerState_t *ps = Proxy_GetPlayerStateByClientNum(0);
+			//ps->ping = proxy.clientData[0].truePing;
+
+			//proxy.trap->Print("trueping : %d \n", proxy.clientData[0].truePing);
+
+			//proxy.trap->Print("cl_timenudge : %d \n", proxy.clientData[0].lastCmdServerTime - proxy.generalData.svsTime + 66 - proxy.clientData[0].truePing);
+			//proxy.trap->Print("svTime : %d \n", proxy.generalData.svTime);
+
+			break;
+		}
+		//==================================================
+		case GAME_CLIENT_THINK: // (int clientNum)
+		//==================================================
+		{
+			int response = proxy.originalVmMain(command, arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11);
+			
+			Proxy_SharedAPI_ClientThink((int)arg0);
+
+			return response;
+		}
+		//==================================================
 		case GAME_CLIENT_USERINFO_CHANGED: // (int clientNum)
 		//==================================================
 		{

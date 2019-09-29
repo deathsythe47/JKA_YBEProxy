@@ -51,6 +51,8 @@
 #define YBEPROXY_VERSION "0.4.0 Beta"
 #define YBEPROXY_BY_AUTHOR "by Yberion"
 
+#define PING_SAMPLE 128
+
 // ==================================================
 // TYPEDEFS
 // ==================================================
@@ -89,10 +91,21 @@ typedef struct Proxy_s {
 		int					g_clientSize;
 	} locatedGameData;
 
-	struct proxyClientData_s {
+	struct clientData_s {
 		qboolean			isConnected;
 		char				cleanName[MAX_NETNAME];
+		int					lastCmdServerTime;
+
+		int					pingSample[PING_SAMPLE];
+		int					pingIndex;
+		int					truePing;
 	} clientData[MAX_CLIENTS];
+
+	struct generalData_s {
+		int					svsTime;
+		int					previousSvsTime;
+		int					frameStartTimeMilliseconds;
+	} generalData;
 } Proxy_t;
 
 // ==================================================
@@ -165,8 +178,9 @@ void Proxy_NewAPI_ShutdownGame(int restart);
 char* Proxy_NewAPI_ClientConnect(int clientNum, qboolean firstTime, qboolean isBot);
 void Proxy_NewAPI_ClientBegin(int clientNum, qboolean allowTeamReset);
 void Proxy_NewAPI_ClientCommand(int clientNum);
-qboolean Proxy_NewAPI_ClientUserinfoChanged(int clientNum);
 void Proxy_NewAPI_RunFrame(int levelTime);
+void Proxy_NewAPI_ClientThink(int clientNum, usercmd_t* ucmd);
+qboolean Proxy_NewAPI_ClientUserinfoChanged(int clientNum);
 
 // ------------------------
 // Proxy_OldAPIWrappers
@@ -188,6 +202,8 @@ void Proxy_SharedAPI_GetUsercmd(int clientNum, usercmd_t* cmd);
 void Proxy_SharedAPI_ClientConnect(int clientNum, qboolean firstTime, qboolean isBot);
 void Proxy_SharedAPI_ClientBegin(int clientNum, qboolean allowTeamReset);
 qboolean Proxy_SharedAPI_ClientCommand(int clientNum);
+void Proxy_NewAPI_RunFrame(int levelTime);
+void Proxy_SharedAPI_ClientThink(int clientNum);
 void Proxy_SharedAPI_ClientUserinfoChanged(int clientNum);
 
 // ------------------------
