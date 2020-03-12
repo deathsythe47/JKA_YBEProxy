@@ -137,11 +137,11 @@ playerState_t* Proxy_GetPlayerStateByClientNum(int num);
 void Proxy_ClientCleanName(const char* in, char* out, int outSize);
 
 // --  q_shared
-char* QDECL va(const char* format, ...);
-char* Info_ValueForKey(const char* s, const char* key);
-void Info_RemoveKey(char* s, const char* key);
-void Info_SetValueForKey(char* s, const char* key, const char* value);
-int QDECL Com_sprintf(char* dest, int size, const char* fmt, ...);
+//char* QDECL va(const char* format, ...);
+//char* Info_ValueForKey(const char* s, const char* key);
+//void Info_RemoveKey(char* s, const char* key);
+//void Info_SetValueForKey(char* s, const char* key, const char* value);
+//int QDECL Com_sprintf(char* dest, int size, const char* fmt, ...);
 
 // -- q_string
 /*
@@ -154,10 +154,10 @@ int QDECL Com_sprintf(char* dest, int size, const char* fmt, ...);
 #endif
 */
 
-int Q_stricmpn(const char* s1, const char* s2, int n);
-int Q_stricmp(const char* s1, const char* s2);
-const char* Q_strchrs(const char* string, const char* search);
-void Q_strncpyz(char* dest, const char* src, int destsize);
+//int Q_stricmpn(const char* s1, const char* s2, int n);
+//int Q_stricmp(const char* s1, const char* s2);
+//const char* Q_strchrs(const char* string, const char* search);
+//void Q_strncpyz(char* dest, const char* src, size_t destsize);
 
 // -- other
 char* ConcatArgs(int start);
